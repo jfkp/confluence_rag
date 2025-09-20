@@ -45,10 +45,12 @@ SYNC_FILE = "last_sync.json"
 # --- SYNC TIME MANAGEMENT ---
 def get_last_sync():
     if not os.path.exists(SYNC_FILE):
-        return datetime.datetime.min
+        print("⚠️ No last_sync.json found — assuming fresh ingest already done.")
+        print("Initializing last_sync.json with current time...")
+        save_last_sync()   # write current UTC timestamp
+        return datetime.datetime.utcnow()
     with open(SYNC_FILE, "r") as f:
         return datetime.datetime.fromisoformat(json.load(f)["last_sync"])
-
 
 def save_last_sync():
     with open(SYNC_FILE, "w") as f:
