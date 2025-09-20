@@ -34,7 +34,7 @@ python confluence_ingest.py
 python confluence_sync.py
 
 
-##On first run, sync will just initialize last_sync.json and skip re-indexing. Subsequent runs only index new/updated content.
+## On first run, sync will just initialize last_sync.json and skip re-indexing. Subsequent runs only index new/updated content.
 
 
 docker build -t confluence-sync .
