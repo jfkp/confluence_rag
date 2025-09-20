@@ -53,3 +53,8 @@ docker run --rm \
   -e OPENAI_API_KEY=$OPENAI_API_KEY \
   -e OPENSEARCH_HOST=$OPENSEARCH_HOST \
   confluence-sync
+
+
+start the qa service
+
+uvicorn qa_service:app --reload --port 8000
