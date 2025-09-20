@@ -22,3 +22,16 @@ export CONFLUENCE_BASE="https://your-domain.atlassian.net"
 export CONFLUENCE_PAT="your_personal_access_token"
 export OPENAI_API_KEY="your_openai_key"
 export OPENSEARCH_HOST="http://localhost:9200"
+
+
+2. **Run full ingestion**
+
+python confluence_ingest.py
+
+
+3. **Run incremental sync**
+
+python confluence_sync.py
+
+
+##On first run, sync will just initialize last_sync.json and skip re-indexing. Subsequent runs only index new/updated content.
