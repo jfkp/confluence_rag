@@ -40,6 +40,14 @@ python confluence_sync.py
 docker build -t confluence-sync .
 
 docker run --rm \
+  -e CONFLUENCE_BASE="https://your-domain.atlassian.net" \
+  -e CONFLUENCE_PAT="your_pat" \
+  -e OPENAI_API_KEY="your_openai_key" \
+  -e OPENSEARCH_HOST="http://localhost:9200" \
+  confluence-sync python confluence_sync.py
+
+
+docker run --rm \
   -e CONFLUENCE_BASE=$CONFLUENCE_BASE \
   -e CONFLUENCE_PAT=$CONFLUENCE_PAT \
   -e OPENAI_API_KEY=$OPENAI_API_KEY \
