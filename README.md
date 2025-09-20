@@ -35,3 +35,13 @@ python confluence_sync.py
 
 
 ##On first run, sync will just initialize last_sync.json and skip re-indexing. Subsequent runs only index new/updated content.
+
+
+docker build -t confluence-sync .
+
+docker run --rm \
+  -e CONFLUENCE_BASE=$CONFLUENCE_BASE \
+  -e CONFLUENCE_PAT=$CONFLUENCE_PAT \
+  -e OPENAI_API_KEY=$OPENAI_API_KEY \
+  -e OPENSEARCH_HOST=$OPENSEARCH_HOST \
+  confluence-sync
