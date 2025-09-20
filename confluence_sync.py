@@ -3,7 +3,7 @@ Incremental Confluence sync script:
 - Detects new or updated pages
 - Detects new attachments
 - Detects new comments
-- Updates OpenSearch index incrementally
+- Updates OpenSearch index incrementally across all spaces
 
 Requires environment variables:
 - CONFLUENCE_BASE
@@ -56,6 +56,14 @@ def save_last_sync():
 
 
 # --- FETCH HELPERS ---
+def fetch_spaces(limit=50, start=0):
+    url = f"{CONFLUENCE_BASE}/rest/api/space"
+    params = {"limit": limit, "start": start}
+    r = requests.get(url, headers=headers, params=params, timeout=30)
+    r.raise_for_status()
+    return r.json()
+
+
 def fetch_pages_in_space(space_key, limit=25, start=0):
     url = f"{CONFLUENCE_BASE}/rest/api/content"
     params = {"spaceKey": space_key, "limit": limit, "start": start, "expand": "body.storage,history"}
@@ -163,8 +171,7 @@ def update_page_comments_in_opensearch(page_id, new_comments):
 
 
 # --- MAIN INCREMENTAL SYNC ---
-def incremental_sync(space_key):
-    since = get_last_sync()
+def incremental_sync_space(space_key, since):
     print(f"Incremental sync for space {space_key} since {since}")
     start = 0
     while True:
@@ -213,9 +220,30 @@ def incremental_sync(space_key):
         if len(results) < 25:
             break
 
+
+def incremental_sync_all_spaces(max_spaces=50):
+    since = get_last_sync()
+    print(f"Starting incremental sync for all spaces since {since}")
+    start = 0
+    seen = 0
+    while seen < max_spaces:
+        res = fetch_spaces(limit=25, start=start)
+        results = res.get("results", [])
+        if not results:
+            break
+        for sp in results:
+            key = sp.get("key")
+            print(f"-> Syncing space {key} ({sp.get('name')})")
+            incremental_sync_space(key, since)
+            seen += 1
+            if seen >= max_spaces:
+                break
+        start += 25
+        if len(results) < 25:
+            break
     save_last_sync()
-    print("Incremental sync done.")
+    print("Finished incremental sync of all spaces.")
 
 
 if __name__ == "__main__":
-    incremental_sync("ENG")  # replace ENG with your space key
+    incremental_sync_all_spaces(max_spaces=10)
