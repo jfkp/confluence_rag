@@ -1,0 +1,5 @@
+fastapi
+uvicorn[standard]
+opensearch-py
+sentence-transformers
+openai
